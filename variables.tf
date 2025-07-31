@@ -68,10 +68,11 @@ variable "container_app_environment_workload_profile" {
     maximum_count        = number
   }))
   default = {
-    name                  = "Consumption"
-    workload_profile_type = "Consumption"
-    minimum_count         = 0
-    maximum_count         = 0
+    Consumption = {
+      name                  = "Consumption"
+      workload_profile_type = "Consumption"
+      minimum_count         = 0
+      maximum_count         = 0
   }
 }
 
