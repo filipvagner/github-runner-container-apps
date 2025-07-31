@@ -48,7 +48,7 @@ resource "azurerm_container_app" "this" {
     max_replicas = each.value.max_replicas
 
     dynamic "container" {
-      for_each = try(each.value.container, []) != null ? each.value.container : []
+      for_each = each.value.container
       content {
         name   = container.value.name
         image  = container.value.image
