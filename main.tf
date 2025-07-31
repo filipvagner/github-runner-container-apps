@@ -54,6 +54,13 @@ resource "azurerm_container_app" "this" {
       memory = each.value.container.memory
     }
 
+    container {
+      name   = "another-container"
+      image  = "mcr.microsoft.com/k8se/quickstart:latest"
+      cpu    = each.value.container.cpu
+      memory = each.value.container.memory
+    }
+
     dynamic "custom_scale_rule" {
       for_each = try(each.value.custom_scale_rule, null) != null ? [each.value.custom_scale_rule] : []
       content {
