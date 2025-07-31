@@ -65,7 +65,7 @@ variable "container_app" {
     name         = string
     min_replicas = optional(number, 0)
     max_replicas = optional(number, 2)
-    container = optional(object({
+    container = map(object({
       name   = string
       image  = string
       cpu    = number

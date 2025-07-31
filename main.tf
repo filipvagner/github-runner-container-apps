@@ -47,18 +47,14 @@ resource "azurerm_container_app" "this" {
     min_replicas = each.value.min_replicas
     max_replicas = each.value.max_replicas
 
-    container {
-      name   = each.value.container.name
-      image  = each.value.container.image
-      cpu    = each.value.container.cpu
-      memory = each.value.container.memory
-    }
-
-    container {
-      name   = "another-container"
-      image  = "mcr.microsoft.com/k8se/quickstart:latest"
-      cpu    = each.value.container.cpu
-      memory = each.value.container.memory
+    dynamic "container" {
+      for_each = try(each.value.container, null) != null ? [each.value.container] : []
+      content {
+        name   = container.value.name
+        image  = container.value.image
+        cpu    = container.value.cpu
+        memory = container.value.memory
+      }
     }
 
     dynamic "custom_scale_rule" {
