@@ -26,11 +26,14 @@ resource "azurerm_container_app_environment" "this" {
   mutual_tls_enabled                 = false
   tags                               = var.tags
 
-  workload_profile {
-    name                  = "Consumption"
-    workload_profile_type = "Consumption"
-    minimum_count         = 0
-    maximum_count         = 0
+  dynamic "workload_profile" {
+    for_each = var.container_app_environment_workload_profile
+    content {
+      name                  = workload_profile.value.name
+      workload_profile_type = workload_profile.value.workload_profile_type
+      minimum_count         = workload_profile.value.minimum_count
+      maximum_count         = workload_profile.value.maximum_count
+    }
   }
 }
 
