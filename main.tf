@@ -57,7 +57,7 @@ resource "azurerm_container_app" "this" {
         image  = container.value.image
         cpu    = container.value.cpu
         memory = container.value.memory
-        }
+      }
     }
 
     dynamic "custom_scale_rule" {
