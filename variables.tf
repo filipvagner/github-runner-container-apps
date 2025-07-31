@@ -62,17 +62,18 @@ variable "container_app_environment_zone_redundancy_enabled" {
 variable "container_app_environment_workload_profile" {
   description = "Map of workload profiles for the Container App Environment."
   type = map(object({
-    name                 = string
+    name                  = string
     workload_profile_type = string
-    minimum_count        = number
-    maximum_count        = number
+    minimum_count         = number
+    maximum_count         = number
   }))
   default = {
-    Consumption = {
+    "Consumption" = {
       name                  = "Consumption"
       workload_profile_type = "Consumption"
       minimum_count         = 0
       maximum_count         = 0
+    }
   }
 }
 
