@@ -56,9 +56,9 @@ resource "azurerm_monitor_diagnostic_setting" "this" {
     category = "ConsoleLogs"
   }
 
-  enabled_metric {
-    category = "AllMetrics"
-  }
+  # enabled_metric {
+  #   category = "AllMetrics"
+  # }
 }
 #endregion Container App Environment
 
