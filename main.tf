@@ -13,6 +13,7 @@ resource "azurerm_log_analytics_workspace" "this" {
   tags                = var.tags
 }
 
+#region Container App Environment
 resource "azurerm_container_app_environment" "this" {
   name                               = var.container_app_environment_name
   location                           = var.location
@@ -21,10 +22,10 @@ resource "azurerm_container_app_environment" "this" {
   infrastructure_subnet_id           = var.container_app_environment_subnet_id
   internal_load_balancer_enabled     = var.container_app_environment_internal_load_balancer_enabled
   zone_redundancy_enabled            = var.container_app_environment_zone_redundancy_enabled
-  log_analytics_workspace_id         = azurerm_log_analytics_workspace.this.id
-  logs_destination                   = "log-analytics"
-  mutual_tls_enabled                 = false
-  tags                               = var.tags
+  #log_analytics_workspace_id         = azurerm_log_analytics_workspace.this.id
+  #ogs_destination                   = "log-analytics"
+  mutual_tls_enabled = false
+  tags               = var.tags
 
   dynamic "workload_profile" {
     for_each = var.container_app_environment_workload_profile
@@ -37,6 +38,31 @@ resource "azurerm_container_app_environment" "this" {
   }
 }
 
+resource "azurerm_monitor_diagnostic_setting" "this" {
+  name                           = "diagnostic-${azurerm_container_app_environment.this.name}"
+  target_resource_id             = azurerm_container_app_environment.this.id
+  log_analytics_workspace_id     = azurerm_log_analytics_workspace.this.id
+  log_analytics_destination_type = "Dedicated"
+
+  enabled_log {
+    category = "AuditEvent"
+  }
+
+  enabled_log {
+    category = "IngressLogs"
+  }
+
+  enabled_log {
+    category = "ConsoleLogs"
+  }
+
+  enabled_metric {
+    category = "AllMetrics"
+  }
+}
+#endregion Container App Environment
+
+#region Container Apps
 resource "azurerm_container_app" "this" {
   for_each = var.container_app
 
@@ -74,3 +100,4 @@ resource "azurerm_container_app" "this" {
   #secret block
 
 }
+#endregion Container Apps
