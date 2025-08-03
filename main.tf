@@ -79,6 +79,14 @@ resource "azurerm_container_app" "this" {
         memory  = container.value.memory
         command = try(container.value.command, null)
         args    = try(container.value.args, null)
+        dynamic "env" {
+          for_each = try(container.value.env, {})
+          content {
+            name        = env.key
+            secret_name = try(env.value.secret_name, null)
+            value       = try(env.value, null)
+          }
+        }
       }
     }
 
