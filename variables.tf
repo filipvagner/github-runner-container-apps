@@ -91,6 +91,7 @@ variable "container_app" {
       #env block (name, secret_name, value)
       args    = optional(list(string))
       command = optional(list(string))
+      workload_profile_name = optional(string, "Consumption")
     }))
     custom_scale_rule = optional(object({
       name             = string
