@@ -45,11 +45,7 @@ resource "azurerm_monitor_diagnostic_setting" "this" {
   log_analytics_destination_type = "Dedicated"
 
   enabled_log {
-    category = "AuditEvent"
-  }
-
-  enabled_log {
-    category = "ConsoleLogs"
+    category_group = "allLogs"
   }
 }
 #endregion Container App Environment
