@@ -80,18 +80,22 @@ variable "container_app_environment_workload_profile" {
 variable "container_app" {
   description = "List of container app template configurations."
   type = map(object({
-    name         = string
-    min_replicas = optional(number, 0)
-    max_replicas = optional(number, 2)
+    name                  = string
+    min_replicas          = optional(number, 0)
+    max_replicas          = optional(number, 2)
     workload_profile_name = optional(string, "Consumption")
     container = map(object({
-      name   = string
-      image  = string
-      cpu    = number
-      memory = string
-      #env block (name, secret_name, value)
+      name    = string
+      image   = string
+      cpu     = number
+      memory  = string
       command = optional(list(string))
       args    = optional(list(string))
+      env = optional(map(object({
+        name        = string
+        secret_name = optional(string)
+        value       = optional(string)
+      })))
     }))
     custom_scale_rule = optional(object({
       name             = string
