@@ -77,6 +77,8 @@ resource "azurerm_container_app" "this" {
         image  = container.value.image
         cpu    = container.value.cpu
         memory = container.value.memory
+        command = try(container.value.command, null)
+        args    = try(container.value.args, null)
       }
     }
 

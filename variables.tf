@@ -90,8 +90,8 @@ variable "container_app" {
       cpu    = number
       memory = string
       #env block (name, secret_name, value)
-      args    = optional(list(string))
       command = optional(list(string))
+      args    = optional(list(string))
     }))
     custom_scale_rule = optional(object({
       name             = string
