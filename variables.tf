@@ -83,6 +83,7 @@ variable "container_app" {
     name         = string
     min_replicas = optional(number, 0)
     max_replicas = optional(number, 2)
+    workload_profile_name = optional(string, "Consumption")
     container = map(object({
       name   = string
       image  = string
@@ -91,7 +92,6 @@ variable "container_app" {
       #env block (name, secret_name, value)
       args    = optional(list(string))
       command = optional(list(string))
-      workload_profile_name = optional(string, "Consumption")
     }))
     custom_scale_rule = optional(object({
       name             = string
