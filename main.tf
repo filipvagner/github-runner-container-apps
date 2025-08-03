@@ -24,8 +24,8 @@ resource "azurerm_container_app_environment" "this" {
   zone_redundancy_enabled            = var.container_app_environment_zone_redundancy_enabled
   log_analytics_workspace_id         = azurerm_log_analytics_workspace.this.id
   logs_destination                   = "log-analytics"
-  mutual_tls_enabled = false
-  tags               = var.tags
+  mutual_tls_enabled                 = false
+  tags                               = var.tags
 
   dynamic "workload_profile" {
     for_each = var.container_app_environment_workload_profile
@@ -73,10 +73,10 @@ resource "azurerm_container_app" "this" {
     dynamic "container" {
       for_each = each.value.container
       content {
-        name   = container.value.name
-        image  = container.value.image
-        cpu    = container.value.cpu
-        memory = container.value.memory
+        name    = container.value.name
+        image   = container.value.image
+        cpu     = container.value.cpu
+        memory  = container.value.memory
         command = try(container.value.command, null)
         args    = try(container.value.args, null)
       }
