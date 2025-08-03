@@ -47,6 +47,16 @@ resource "azurerm_monitor_diagnostic_setting" "this" {
   enabled_log {
     category_group = "allLogs"
   }
+
+  metric {
+    category = "AllMetrics"
+    enabled  = true
+
+    retention_policy {
+      days    = 7
+      enabled = true
+    }
+  }
 }
 #endregion Container App Environment
 
