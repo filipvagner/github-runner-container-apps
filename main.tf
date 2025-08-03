@@ -84,7 +84,7 @@ resource "azurerm_container_app" "this" {
           content {
             name        = env.key
             secret_name = try(env.value.secret_name, null)
-            value       = try(env.value, null)
+            value       = try(env.value.value, null)
           }
         }
       }
