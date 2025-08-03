@@ -22,8 +22,8 @@ resource "azurerm_container_app_environment" "this" {
   infrastructure_subnet_id           = var.container_app_environment_subnet_id
   internal_load_balancer_enabled     = var.container_app_environment_internal_load_balancer_enabled
   zone_redundancy_enabled            = var.container_app_environment_zone_redundancy_enabled
-  #log_analytics_workspace_id         = azurerm_log_analytics_workspace.this.id
-  #ogs_destination                   = "log-analytics"
+  log_analytics_workspace_id         = azurerm_log_analytics_workspace.this.id
+  logs_destination                   = "log-analytics"
   mutual_tls_enabled = false
   tags               = var.tags
 
