@@ -82,14 +82,14 @@ resource "azurerm_container_app" "this" {
         dynamic "env" {
           for_each = try(container.value.env, {})
           content {
-            name        = env.key
+            name        = env.value.name
             secret_name = try(env.value.secret_name, null)
             value       = try(env.value.value, null)
           }
         }
       }
     }
-
+    
     dynamic "custom_scale_rule" {
       for_each = try(each.value.custom_scale_rule, null) != null ? [each.value.custom_scale_rule] : []
       content {
@@ -100,8 +100,14 @@ resource "azurerm_container_app" "this" {
     }
   }
 
-  #TODO - Add more configurations as needed for the Container App
-  #secret block
-
+  dynamic "secret" {
+      for_each = try(each.value.secret, {})
+      content {
+        name  = secret.value.name
+        identity = try(secret.value.identity, null)
+        key_vault_secret_id = try(secret.value.key_vault_secret_id, null)
+        value = try(secret.value.value, null)
+      }
+    }
 }
 #endregion Container Apps

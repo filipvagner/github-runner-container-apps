@@ -96,12 +96,19 @@ variable "container_app" {
         secret_name = optional(string)
         value       = optional(string)
       })), {})
+
     }))
     custom_scale_rule = optional(object({
       name             = string
       custom_rule_type = string
       metadata         = map(string)
     }))
+    secret = optional(map(object({
+      name     = string
+      identity = optional(string)
+      key_vault_secret_id = optional(string)
+      value    = optional(string)
+    })), {})
   }))
   default = {}
 }
