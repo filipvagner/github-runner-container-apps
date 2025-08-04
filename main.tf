@@ -64,7 +64,7 @@ resource "azurerm_container_app" "this" {
   resource_group_name          = azurerm_resource_group.this.name
   revision_mode                = "Single"
   tags                         = var.tags
-  workload_profile_name        = try(each.value.workload_profile_name, "Consumption")
+  workload_profile_name        = each.value.workload_profile_name
 
   template {
     min_replicas = each.value.min_replicas
