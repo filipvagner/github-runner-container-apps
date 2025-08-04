@@ -97,6 +97,7 @@ variable "container_app" {
         value       = optional(string)
       })))
     }))
+    default = {}
     custom_scale_rule = optional(object({
       name             = string
       custom_rule_type = string
