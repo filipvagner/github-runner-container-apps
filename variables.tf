@@ -83,7 +83,7 @@ variable "container_app" {
     name                  = string
     min_replicas          = optional(number, 0)
     max_replicas          = optional(number, 2)
-    workload_profile_name = optional(string, "Consumption")
+    workload_profile_name = optional(string)
     container = map(object({
       name    = string
       image   = string
