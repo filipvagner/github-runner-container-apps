@@ -96,8 +96,8 @@ variable "container_app" {
         secret_name = optional(string)
         value       = optional(string)
       })))
+      default = {}
     }))
-    default = {}
     custom_scale_rule = optional(object({
       name             = string
       custom_rule_type = string
