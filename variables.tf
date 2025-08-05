@@ -59,25 +59,61 @@ variable "container_app_environment_zone_redundancy_enabled" {
   default     = false
 }
 
+variable "container_app_environment_workload_profile" {
+  description = "Map of workload profiles for the Container App Environment."
+  type = map(object({
+    name                  = string
+    workload_profile_type = string
+    minimum_count         = number
+    maximum_count         = number
+  }))
+  default = {
+    "Consumption" = {
+      name                  = "Consumption"
+      workload_profile_type = "Consumption"
+      minimum_count         = 0
+      maximum_count         = 0
+    }
+  }
+}
+
 variable "container_app" {
   description = "List of container app template configurations."
   type = map(object({
-    name         = string
-    min_replicas = optional(number, 0)
-    max_replicas = optional(number, 2)
-    container = optional(object({
-      name   = string
-      image  = string
-      cpu    = number
-      memory = string
-      #env block (name, secret_name, value)
-      args    = optional(list(string))
+    name                  = string
+    min_replicas          = optional(number, 0)
+    max_replicas          = optional(number, 2)
+    workload_profile_name = optional(string, "Consumption")
+    container = map(object({
+      name    = string
+      image   = string
+      cpu     = number
+      memory  = string
       command = optional(list(string))
+      args    = optional(list(string))
+      env = optional(map(object({
+        name        = string
+        secret_name = optional(string)
+        value       = optional(string)
+      })), {})
+
     }))
     custom_scale_rule = optional(object({
       name             = string
       custom_rule_type = string
       metadata         = map(string)
+    }))
+    secret = optional(map(object({
+      name                = string
+      identity            = optional(string)
+      key_vault_secret_id = optional(string)
+      value               = optional(string)
+    })), {})
+    registry = optional(object({
+      server               = string
+      identity             = optional(string)
+      username             = optional(string)
+      password_secret_name = optional(string)
     }))
   }))
   default = {}

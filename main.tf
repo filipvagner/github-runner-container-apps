@@ -13,6 +13,7 @@ resource "azurerm_log_analytics_workspace" "this" {
   tags                = var.tags
 }
 
+#region Container App Environment
 resource "azurerm_container_app_environment" "this" {
   name                               = var.container_app_environment_name
   location                           = var.location
@@ -26,14 +27,35 @@ resource "azurerm_container_app_environment" "this" {
   mutual_tls_enabled                 = false
   tags                               = var.tags
 
-  workload_profile {
-    name                  = "Consumption"
-    workload_profile_type = "Consumption"
-    minimum_count         = 0
-    maximum_count         = 0
+  dynamic "workload_profile" {
+    for_each = var.container_app_environment_workload_profile
+    content {
+      name                  = workload_profile.value.name
+      workload_profile_type = workload_profile.value.workload_profile_type
+      minimum_count         = workload_profile.value.minimum_count
+      maximum_count         = workload_profile.value.maximum_count
+    }
   }
 }
 
+resource "azurerm_monitor_diagnostic_setting" "this" {
+  name                           = "diagnostic-${azurerm_container_app_environment.this.name}"
+  target_resource_id             = azurerm_container_app_environment.this.id
+  log_analytics_workspace_id     = azurerm_log_analytics_workspace.this.id
+  log_analytics_destination_type = "Dedicated"
+
+  enabled_log {
+    category_group = "allLogs"
+  }
+
+  metric {
+    category = "AllMetrics"
+    enabled  = true
+  }
+}
+#endregion Container App Environment
+
+#region Container Apps
 resource "azurerm_container_app" "this" {
   for_each = var.container_app
 
@@ -42,16 +64,30 @@ resource "azurerm_container_app" "this" {
   resource_group_name          = azurerm_resource_group.this.name
   revision_mode                = "Single"
   tags                         = var.tags
+  workload_profile_name        = each.value.workload_profile_name
 
   template {
     min_replicas = each.value.min_replicas
     max_replicas = each.value.max_replicas
 
-    container {
-      name   = each.value.container.name
-      image  = each.value.container.image
-      cpu    = each.value.container.cpu
-      memory = each.value.container.memory
+    dynamic "container" {
+      for_each = each.value.container
+      content {
+        name    = container.value.name
+        image   = container.value.image
+        cpu     = container.value.cpu
+        memory  = container.value.memory
+        command = try(container.value.command, null)
+        args    = try(container.value.args, null)
+        dynamic "env" {
+          for_each = try(container.value.env, {})
+          content {
+            name        = env.value.name
+            secret_name = try(env.value.secret_name, null)
+            value       = try(env.value.value, null)
+          }
+        }
+      }
     }
 
     dynamic "custom_scale_rule" {
@@ -64,7 +100,24 @@ resource "azurerm_container_app" "this" {
     }
   }
 
-  #TODO - Add more configurations as needed for the Container App
-  #secret block
+  dynamic "registry" {
+    for_each = try(each.value.registry, null) != null ? [each.value.registry] : []
+    content {
+      server               = try(registry.value.server, null)
+      identity             = try(registry.value.identity, null)
+      username             = try(registry.value.username, null)
+      password_secret_name = try(registry.value.password_secret_name, null)
+    }
+  }
 
+  dynamic "secret" {
+    for_each = try(each.value.secret, {})
+    content {
+      name                = secret.value.name
+      identity            = try(secret.value.identity, null)
+      key_vault_secret_id = try(secret.value.key_vault_secret_id, null)
+      value               = try(secret.value.value, null)
+    }
+  }
 }
+#endregion Container Apps
