@@ -53,6 +53,21 @@ resource "azurerm_monitor_diagnostic_setting" "this" {
     enabled  = true
   }
 }
+
+resource "azurerm_private_endpoint" "this" {
+  count               = var.container_app_environment_private_endpoint_subnet_id != null ? 1 : 0
+  
+  name                = "pe-${var.container_app_environment_name}"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.this.name
+  subnet_id           = var.container_app_environment_private_endpoint_subnet_id
+
+  private_service_connection {
+    name                           = "pse-${var.container_app_environment_name}"
+    private_connection_resource_id = azurerm_container_app_environment.this.id
+    is_manual_connection           = false
+  }
+}
 #endregion Container App Environment
 
 #region Container Apps

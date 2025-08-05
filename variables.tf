@@ -77,6 +77,12 @@ variable "container_app_environment_workload_profile" {
   }
 }
 
+variable "container_app_environment_private_endpoint_subnet_id" {
+  description = "The subnet ID for the Container App Environment private endpoint."
+  type        = string
+  default     = null
+}
+
 variable "container_app" {
   description = "List of container app template configurations."
   type = map(object({
