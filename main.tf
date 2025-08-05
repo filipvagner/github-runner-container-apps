@@ -89,7 +89,7 @@ resource "azurerm_container_app" "this" {
         }
       }
     }
-    
+
     dynamic "custom_scale_rule" {
       for_each = try(each.value.custom_scale_rule, null) != null ? [each.value.custom_scale_rule] : []
       content {
@@ -100,14 +100,24 @@ resource "azurerm_container_app" "this" {
     }
   }
 
-  dynamic "secret" {
-      for_each = try(each.value.secret, {})
-      content {
-        name  = secret.value.name
-        identity = try(secret.value.identity, null)
-        key_vault_secret_id = try(secret.value.key_vault_secret_id, null)
-        value = try(secret.value.value, null)
-      }
+  dynamic "registry" {
+    for_each = try(each.value.registry, null) != null ? [each.value.registry] : []
+    content {
+      server               = try(registry.value.server, null)
+      identity             = try(registry.value.identity, null)
+      username             = try(registry.value.username, null)
+      password_secret_name = try(registry.value.password_secret_name, null)
     }
+  }
+
+  dynamic "secret" {
+    for_each = try(each.value.secret, {})
+    content {
+      name                = secret.value.name
+      identity            = try(secret.value.identity, null)
+      key_vault_secret_id = try(secret.value.key_vault_secret_id, null)
+      value               = try(secret.value.value, null)
+    }
+  }
 }
 #endregion Container Apps

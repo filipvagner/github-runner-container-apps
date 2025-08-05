@@ -104,11 +104,17 @@ variable "container_app" {
       metadata         = map(string)
     }))
     secret = optional(map(object({
-      name     = string
-      identity = optional(string)
+      name                = string
+      identity            = optional(string)
       key_vault_secret_id = optional(string)
-      value    = optional(string)
+      value               = optional(string)
     })), {})
+    registry = optional(object({
+      server               = string
+      identity             = optional(string)
+      username             = optional(string)
+      password_secret_name = optional(string)
+    }))
   }))
   default = {}
 }
